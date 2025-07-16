@@ -3,6 +3,9 @@
 #include <memory>
 #include <array>
 
+#define CAN_INV_DLC                     8
+#define CAN_INV_EFF_FLAG                0x80000000
+
 #pragma pack(push, 1)
 /**
  * @brief CAN frame structure
@@ -129,33 +132,101 @@ public:
  */
 class UUgreenFrameGenerator : public ICanFrameGenerator {
 public:
-    can_frame generateVoltageRequest(uint8_t module_address) override {
-        can_frame frame{};
-        frame.can_id = module_address;
-        frame.can_dlc = 2;
-        frame.data[0] = 0x12;
-        frame.data[1] = 0x62;
-        return frame;
-    }
+
+    /**
+     * @brief Generate CAN frame for temperature reading request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateTempRequest(uint8_t module_address) override;
+
+    /**
+     * @brief Generate CAN frame for Current capability reading request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateCurrentCapabilityRequest(uint8_t module_address) override;
+
+    /**
+     * @brief Generate CAN frame for Flags reading request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateFlagsRequest(uint8_t module_address) override;
+
+    /**
+     * @brief Generate CAN frame for voltage reading request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateVoltageRequest(uint8_t module_address) override;
     
-    can_frame generateCurrentRequest(uint8_t module_address) override {
-        can_frame frame{};
-        frame.can_id = module_address;
-        frame.can_dlc = 2;
-        frame.data[0] = 0x13;
-        frame.data[1] = 0x63;
-        return frame;
-    }
+    /**
+     * @brief Generate CAN frame for current reading request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateCurrentRequest(uint8_t module_address) override;
     
-    can_frame generateVoltageSet(uint8_t module_address, uint16_t voltage) override {
-        can_frame frame{};
-        frame.can_id = module_address;
-        frame.can_dlc = 3;
-        frame.data[0] = 0x22;
-        frame.data[1] = static_cast<uint8_t>(voltage >> 8);
-        frame.data[2] = static_cast<uint8_t>(voltage & 0xFF);
-        return frame;
-    }
+    /**
+     * @brief Generate CAN frame for set low mode request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateLowModeSet(uint8_t module_address) override;
+
+    /**
+     * @brief Generate CAN frame for set high mode request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateHighModeSet(uint8_t module_address) override; 
+
+    /**
+     * @brief Generate CAN frame for set auto mode request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateAutoModeSet(uint8_t module_address) override;
+
+    /**
+     * @brief Generate CAN frame for voltage setting
+     * @param module_address Device address
+     * @param voltage Voltage value (in 0.1V units)
+     * @return Generated CAN frame
+     */
+    can_frame generateVoltageSet(uint8_t module_address, uint16_t voltage) override;
+    
+    /**
+     * @brief Generate CAN frame for current setting
+     * @param module_address Device address
+     * @param current Current value (in 0.1A units)
+     * @return Generated CAN frame
+     */
+    can_frame generateCurrentSet(uint8_t module_address, uint16_t current) override;
+
+    /**
+     * @brief Generate CAN frame for power ON
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateEnable(uint8_t module_address) override;
+
+    /**
+     * @brief Generate CAN frame for power OFF
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateDisable(uint8_t module_address) override;
+
+protected:
+    /**
+     * @brief Init CAN frame for create request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame init_frame (uint8_t module_address) override;    
+    
 };
 
 /**
@@ -163,19 +234,100 @@ public:
  */
 class MMeetFrameGenerator : public ICanFrameGenerator {
 public:
-    can_frame generateVoltageRequest(uint8_t module_address) override {
-        can_frame frame{};
-        frame.can_id = module_address;
-        frame.can_dlc = 5;
-        frame.data[0] = 0x01;
-        frame.data[1] = 0xF0;
-        frame.data[2] = 0x00;
-        frame.data[3] = 0x02;
-        frame.data[4] = 0x31;
-        return frame;
-    }
+
+    /**
+     * @brief Generate CAN frame for temperature reading request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateTempRequest(uint8_t module_address) override;
+
+    /**
+     * @brief Generate CAN frame for Current capability reading request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateCurrentCapabilityRequest(uint8_t module_address) override;
+
+    /**
+     * @brief Generate CAN frame for Flags reading request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateFlagsRequest(uint8_t module_address) override;
+
+    /**
+     * @brief Generate CAN frame for voltage reading request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateVoltageRequest(uint8_t module_address) override;
     
-    // Implement other MMeet-specific frame generators...
+    /**
+     * @brief Generate CAN frame for current reading request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateCurrentRequest(uint8_t module_address) override;
+    
+    /**
+     * @brief Generate CAN frame for set low mode request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateLowModeSet(uint8_t module_address) override;
+
+    /**
+     * @brief Generate CAN frame for set high mode request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateHighModeSet(uint8_t module_address) override; 
+
+    /**
+     * @brief Generate CAN frame for set auto mode request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateAutoModeSet(uint8_t module_address) override;
+
+    /**
+     * @brief Generate CAN frame for voltage setting
+     * @param module_address Device address
+     * @param voltage Voltage value (in 0.1V units)
+     * @return Generated CAN frame
+     */
+    can_frame generateVoltageSet(uint8_t module_address, uint16_t voltage) override;
+    
+    /**
+     * @brief Generate CAN frame for current setting
+     * @param module_address Device address
+     * @param current Current value (in 0.1A units)
+     * @return Generated CAN frame
+     */
+    can_frame generateCurrentSet(uint8_t module_address, uint16_t current) override;
+
+    /**
+     * @brief Generate CAN frame for power ON
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateEnable(uint8_t module_address) override;
+
+    /**
+     * @brief Generate CAN frame for power OFF
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateDisable(uint8_t module_address) override;
+
+protected:
+    /**
+     * @brief Init CAN frame for create request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame init_frame (uint8_t module_address) override;    
 };
 
 /**
@@ -190,10 +342,10 @@ public:
     explicit CanProtocolManager(ProtocolType protocol) {
         switch(protocol) {
             case ProtocolType::UUgreen:
-                generator_ = std::make_unique<UUgreenFrameGenerator>();
+                _generator = std::make_unique<UUgreenFrameGenerator>();
                 break;
             case ProtocolType::MMeet:
-                generator_ = std::make_unique<MMeetFrameGenerator>();
+                _generator = std::make_unique<MMeetFrameGenerator>();
                 break;
             // Add other protocols...
         }
@@ -206,43 +358,125 @@ public:
     void setProtocol(ProtocolType protocol) {
         switch(protocol) {
             case ProtocolType::UUgreen:
-                generator_ = std::make_unique<UUgreenFrameGenerator>();
+                _generator = std::make_unique<UUgreenFrameGenerator>();
                 break;
             case ProtocolType::MMeet:
-                generator_ = std::make_unique<MMeetFrameGenerator>();
+                _generator = std::make_unique<MMeetFrameGenerator>();
                 break;
             // Add other protocols...
         }
     }
-    
+
     /**
-     * @brief Generate voltage request frame
+     * @brief Generate CAN frame for temperature reading request
      * @param module_address Device address
      * @return Generated CAN frame
      */
-    can_frame requestVoltage(uint8_t module_address) {
-        return generator_->generateVoltageRequest(module_address);
+    can_frame generateTempRequest(uint8_t module_address) {
+        return _generator->generateTempRequest(module_address);
     }
-    
+
     /**
-     * @brief Generate current request frame
+     * @brief Generate CAN frame for Current capability reading request
      * @param module_address Device address
      * @return Generated CAN frame
      */
-    can_frame requestCurrent(uint8_t module_address) {
-        return generator_->generateCurrentRequest(module_address);
+    can_frame generateCurrentCapabilityRequest(uint8_t module_address) {
+        return _generator->generateCurrentCapabilityRequest(module_address);
     }
+
+    /**
+     * @brief Generate CAN frame for Flags reading request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateFlagsRequest(uint8_t module_address) {
+        return _generator->generateFlagsRequest(module_address);
+    }
+
+    /**
+     * @brief Generate CAN frame for voltage reading request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateVoltageRequest(uint8_t module_address) {
+        return _generator->generateVoltageRequest(module_address);
+    } 
     
     /**
-     * @brief Generate voltage set frame
+     * @brief Generate CAN frame for current reading request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateCurrentRequest(uint8_t module_address) {
+        return _generator->generateCurrentRequest(module_address);
+    } 
+    
+    /**
+     * @brief Generate CAN frame for set low mode request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateLowModeSet(uint8_t module_address) {
+        return _generator->generateLowModeSet(module_address);
+    } 
+
+    /**
+     * @brief Generate CAN frame for set high mode request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateHighModeSet(uint8_t module_address) {
+        return _generator->generateHighModeSet(module_address);
+    } 
+
+    /**
+     * @brief Generate CAN frame for set auto mode request
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateAutoModeSet(uint8_t module_address) {
+        return _generator->generateAutoModeSet(module_address);
+    }
+
+    /**
+     * @brief Generate CAN frame for voltage setting
      * @param module_address Device address
      * @param voltage Voltage value (in 0.1V units)
      * @return Generated CAN frame
      */
-    can_frame setVoltage(uint8_t module_address, uint16_t voltage) {
-        return generator_->generateVoltageSet(module_address, voltage);
+    can_frame generateVoltageSet(uint8_t module_address, uint16_t voltage) {
+        return _generator->generateVoltageSet(module_address , voltage);
+    }
+    
+    /**
+     * @brief Generate CAN frame for current setting
+     * @param module_address Device address
+     * @param current Current value (in 0.1A units)
+     * @return Generated CAN frame
+     */
+    can_frame generateCurrentSet(uint8_t module_address, uint16_t current) {
+        return _generator->generateCurrentSet(module_address , current);
+    }
+
+    /**
+     * @brief Generate CAN frame for power ON
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateEnable(uint8_t module_address) {
+        return _generator->generateEnable(module_address);
+    }
+
+    /**
+     * @brief Generate CAN frame for power OFF
+     * @param module_address Device address
+     * @return Generated CAN frame
+     */
+    can_frame generateDisable(uint8_t module_address) {
+        return _generator->generateDisable(module_address);
     }
     
 private:
-    std::unique_ptr<ICanFrameGenerator> generator_;
+    std::unique_ptr<ICanFrameGenerator> _generator;
 };
