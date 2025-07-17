@@ -1,5 +1,14 @@
 #include "../include/libmodul.h"
 
+#define CAN_INV_DLC                     8
+#define CAN_INV_EFF_FLAG                0x80000000
+ 
+const uint8_t LOW_MODE = 0x00;                
+const uint8_t HIGH_MODE = 0x01; 
+const uint8_t AUTO_MODE = 0x02;           
+const uint8_t OFF = 0x01;                     
+const uint8_t ON = 0x00;
+
 can_frame UUgreenFrameGenerator::init_frame(uint8_t module_address)
 {
     can_frame frame{};
@@ -52,6 +61,36 @@ can_frame UUgreenFrameGenerator::generateCurrentRequest(uint8_t module_address)
     frame.data[1] = 0x30;
     return frame;
 }
+
+can_frame UUgreenFrameGenerator::generateLowModeSet(uint8_t module_address)
+{
+    can_frame frame{};
+    frame.can_id = (init_frame(module_address)).can_id;
+    frame.data[0] = 0x10;
+    frame.data[1] = 0x5F;
+    frame.data[7] = LOW_MODE;
+    return frame;
+}
+
+can_frame UUgreenFrameGenerator::generateHighModeSet(uint8_t module_address)
+{
+    can_frame frame{};
+    frame.can_id = (init_frame(module_address)).can_id;
+    frame.data[0] = 0x10;
+    frame.data[1] = 0x5F;
+    frame.data[7] = HIGH_MODE;
+    return frame;
+}
+
+can_frame UUgreenFrameGenerator::generateAutoModeSet(uint8_t module_address)
+{
+    can_frame frame{};
+    frame.can_id = (init_frame(module_address)).can_id;
+    frame.data[0] = 0x10;
+    frame.data[1] = 0x5F;
+    frame.data[7] = AUTO_MODE;
+    return frame;
+}
    
 can_frame UUgreenFrameGenerator::generateVoltageSet(uint8_t module_address, uint16_t voltage)
 {
@@ -65,5 +104,40 @@ can_frame UUgreenFrameGenerator::generateVoltageSet(uint8_t module_address, uint
     frame.data[5] = static_cast<uint8_t>((math_voltage & 0x00ff0000) >> 16);
     frame.data[6] = static_cast<uint8_t>((math_voltage & 0x0000ff00) >> 8);
     frame.data[7] = static_cast<uint8_t>(math_voltage & 0x000000ff);
+    return frame;
+}
+
+can_frame UUgreenFrameGenerator::generateCurrentSet(uint8_t module_address, uint16_t current)
+{
+    uint32_t math_current = current*100;
+    can_frame frame{};
+    frame.can_id = (init_frame(module_address)).can_id;
+
+    frame.data[0] = 0x10;
+    frame.data[1] = 0x03;
+    frame.data[4] = static_cast<uint8_t>((math_current & 0xff000000) >> 24);
+    frame.data[5] = static_cast<uint8_t>((math_current & 0x00ff0000) >> 16);
+    frame.data[6] = static_cast<uint8_t>((math_current & 0x0000ff00) >> 8);
+    frame.data[7] = static_cast<uint8_t>(math_current & 0x000000ff);
+    return frame;
+}
+
+can_frame UUgreenFrameGenerator::generateEnable(uint8_t module_address)
+{
+    can_frame frame{};
+    frame.can_id = (init_frame(module_address)).can_id;
+    frame.data[0] = 0x10;
+    frame.data[1] = 0x04;
+    frame.data[7] = ON;
+    return frame;
+}
+
+can_frame UUgreenFrameGenerator::generateDisable(uint8_t module_address)
+{
+    can_frame frame{};
+    frame.can_id = (init_frame(module_address)).can_id;
+    frame.data[0] = 0x10;
+    frame.data[1] = 0x04;
+    frame.data[7] = OFF;
     return frame;
 }

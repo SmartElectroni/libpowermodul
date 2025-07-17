@@ -3,9 +3,6 @@
 #include <memory>
 #include <array>
 
-#define CAN_INV_DLC                     8
-#define CAN_INV_EFF_FLAG                0x80000000
-
 #pragma pack(push, 1)
 /**
  * @brief CAN frame structure
