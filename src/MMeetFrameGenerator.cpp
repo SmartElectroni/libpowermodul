@@ -9,7 +9,7 @@ const uint8_t AUTO_MODE = 0x02;
 const uint8_t OFF = 0x01;                     
 const uint8_t ON = 0x00;
 
-can_frame UUgreenFrameGenerator::init_frame(uint8_t module_address)
+can_frame MMeetFrameGenerator::init_frame(uint8_t module_address)
 {
     can_frame frame{};
     frame.can_dlc = CAN_INV_DLC;
@@ -18,7 +18,7 @@ can_frame UUgreenFrameGenerator::init_frame(uint8_t module_address)
     return frame;
 }
 
-can_frame UUgreenFrameGenerator::generateTempRequest(uint8_t module_address)
+can_frame MMeetFrameGenerator::generateTempRequest(uint8_t module_address)
 {
     can_frame frame{};
     frame.can_id = (init_frame(module_address)).can_id;
@@ -27,7 +27,7 @@ can_frame UUgreenFrameGenerator::generateTempRequest(uint8_t module_address)
     return frame;
 }
 
-can_frame UUgreenFrameGenerator::generateCurrentCapabilityRequest(uint8_t module_address)
+can_frame MMeetFrameGenerator::generateCurrentCapabilityRequest(uint8_t module_address)
 {
     can_frame frame{};
     frame.can_id = (init_frame(module_address)).can_id;
@@ -36,7 +36,7 @@ can_frame UUgreenFrameGenerator::generateCurrentCapabilityRequest(uint8_t module
     return frame;
 }
     
-can_frame UUgreenFrameGenerator::generateFlagsRequest(uint8_t module_address)
+can_frame MMeetFrameGenerator::generateFlagsRequest(uint8_t module_address)
 {
     can_frame frame{};
     frame.can_id = (init_frame(module_address)).can_id;
@@ -45,7 +45,7 @@ can_frame UUgreenFrameGenerator::generateFlagsRequest(uint8_t module_address)
     return frame;
 }
 
-can_frame UUgreenFrameGenerator::generateVoltageRequest(uint8_t module_address)
+can_frame MMeetFrameGenerator::generateVoltageRequest(uint8_t module_address)
 {
     can_frame frame{};
     frame.can_id = (init_frame(module_address)).can_id;
@@ -54,7 +54,7 @@ can_frame UUgreenFrameGenerator::generateVoltageRequest(uint8_t module_address)
     return frame;
 }
 
-can_frame UUgreenFrameGenerator::generateCurrentRequest(uint8_t module_address)
+can_frame MMeetFrameGenerator::generateCurrentRequest(uint8_t module_address)
 {
     can_frame frame{};
     frame.can_id = (init_frame(module_address)).can_id;
@@ -63,7 +63,7 @@ can_frame UUgreenFrameGenerator::generateCurrentRequest(uint8_t module_address)
     return frame;
 }
 
-can_frame UUgreenFrameGenerator::generateLowModeSet(uint8_t module_address)
+can_frame MMeetFrameGenerator::generateLowModeSet(uint8_t module_address)
 {
     can_frame frame{};
     frame.can_id = (init_frame(module_address)).can_id;
@@ -73,7 +73,7 @@ can_frame UUgreenFrameGenerator::generateLowModeSet(uint8_t module_address)
     return frame;
 }
 
-can_frame UUgreenFrameGenerator::generateHighModeSet(uint8_t module_address)
+can_frame MMeetFrameGenerator::generateHighModeSet(uint8_t module_address)
 {
     can_frame frame{};
     frame.can_id = (init_frame(module_address)).can_id;
@@ -83,7 +83,7 @@ can_frame UUgreenFrameGenerator::generateHighModeSet(uint8_t module_address)
     return frame;
 }
 
-can_frame UUgreenFrameGenerator::generateAutoModeSet(uint8_t module_address)
+can_frame MMeetFrameGenerator::generateAutoModeSet(uint8_t module_address)
 {
     can_frame frame{};
     frame.can_id = (init_frame(module_address)).can_id;
@@ -93,7 +93,7 @@ can_frame UUgreenFrameGenerator::generateAutoModeSet(uint8_t module_address)
     return frame;
 }
    
-can_frame UUgreenFrameGenerator::generateVoltageSet(uint8_t module_address, uint16_t voltage)
+can_frame MMeetFrameGenerator::generateVoltageSet(uint8_t module_address, uint16_t voltage)
 {
     uint32_t math_voltage = voltage*100;
     can_frame frame{};
@@ -108,7 +108,7 @@ can_frame UUgreenFrameGenerator::generateVoltageSet(uint8_t module_address, uint
     return frame;
 }
 
-can_frame UUgreenFrameGenerator::generateCurrentSet(uint8_t module_address, uint16_t current)
+can_frame MMeetFrameGenerator::generateCurrentSet(uint8_t module_address, uint16_t current)
 {
     uint32_t math_current = current*100;
     can_frame frame{};
@@ -123,7 +123,7 @@ can_frame UUgreenFrameGenerator::generateCurrentSet(uint8_t module_address, uint
     return frame;
 }
 
-can_frame UUgreenFrameGenerator::generateEnable(uint8_t module_address)
+can_frame MMeetFrameGenerator::generateEnable(uint8_t module_address)
 {
     can_frame frame{};
     frame.can_id = (init_frame(module_address)).can_id;
@@ -133,7 +133,7 @@ can_frame UUgreenFrameGenerator::generateEnable(uint8_t module_address)
     return frame;
 }
 
-can_frame UUgreenFrameGenerator::generateDisable(uint8_t module_address)
+can_frame MMeetFrameGenerator::generateDisable(uint8_t module_address)
 {
     can_frame frame{};
     frame.can_id = (init_frame(module_address)).can_id;
