@@ -3,11 +3,11 @@
 #define CAN_INV_DLC                     8
 #define CAN_INV_EFF_FLAG                0x80000000
  
-const uint8_t LOW_MODE = 0x00;                
-const uint8_t HIGH_MODE = 0x01; 
-const uint8_t AUTO_MODE = 0x02;           
-const uint8_t OFF = 0x01;                     
-const uint8_t ON = 0x00;
+const uint32_t LOW_MODE = 0x1111;                
+const uint32_t HIGH_MODE = 0x2222; 
+const uint32_t AUTO_MODE = 0x0;           
+const uint32_t OFF = 0x55;                     
+const uint32_t ON = 0xAA;
 
 can_frame MMeetFrameGenerator::init_frame(uint8_t module_address)
 {
