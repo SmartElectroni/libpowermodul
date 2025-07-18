@@ -4,8 +4,7 @@
 #define CAN_INV_EFF_FLAG                0x80000000
  
 const uint8_t LOW_MODE = 0x00;                
-const uint8_t HIGH_MODE = 0x01; 
-const uint8_t AUTO_MODE = 0x02;           
+const uint8_t HIGH_MODE = 0x01;         
 const uint8_t OFF = 0x01;                     
 const uint8_t ON = 0x00;
 
@@ -83,14 +82,10 @@ can_frame UUgreenFrameGenerator::generateHighModeSet(uint8_t module_address)
     return frame;
 }
 
-can_frame UUgreenFrameGenerator::generateAutoModeSet(uint8_t module_address)
+std::optional<can_frame> UUgreenFrameGenerator::generateAutoModeSet(uint8_t module_address)
 {
-    can_frame frame{};
-    frame.can_id = (init_frame(module_address)).can_id;
-    frame.data[0] = 0x10;
-    frame.data[1] = 0x5F;
-    frame.data[7] = AUTO_MODE;
-    return frame;
+    (void)module_address;
+    return std::nullopt;
 }
    
 can_frame UUgreenFrameGenerator::generateVoltageSet(uint8_t module_address, uint16_t voltage)

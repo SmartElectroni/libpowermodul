@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <memory>
 #include <array>
+#include <optional>
 
 #pragma pack(push, 1)
 /**
@@ -91,7 +92,7 @@ public:
      * @param module_address Device address
      * @return Generated CAN frame
      */
-    virtual can_frame generateAutoModeSet(uint8_t module_address) = 0;
+    virtual std::optional<can_frame> generateAutoModeSet(uint8_t module_address) = 0;
 
     /**
      * @brief Generate CAN frame for voltage setting
@@ -180,11 +181,11 @@ public:
     can_frame generateHighModeSet(uint8_t module_address) override; 
 
     /**
-     * @brief Generate CAN frame for set auto mode request
+     * @brief Not supported
      * @param module_address Device address
-     * @return Generated CAN frame
+     * @return std::nullopt
      */
-    can_frame generateAutoModeSet(uint8_t module_address) override;
+    std::optional<can_frame> generateAutoModeSet(uint8_t module_address) override;
 
     /**
      * @brief Generate CAN frame for voltage setting
@@ -286,7 +287,7 @@ public:
      * @param module_address Device address
      * @return Generated CAN frame
      */
-    can_frame generateAutoModeSet(uint8_t module_address) override;
+    std::optional<can_frame> generateAutoModeSet(uint8_t module_address) override;
 
     /**
      * @brief Generate CAN frame for voltage setting
@@ -432,7 +433,7 @@ public:
      * @param module_address Device address
      * @return Generated CAN frame
      */
-    can_frame generateAutoModeSet(uint8_t module_address) {
+    std::optional<can_frame> generateAutoModeSet(uint8_t module_address) {
         return _generator->generateAutoModeSet(module_address);
     }
 
