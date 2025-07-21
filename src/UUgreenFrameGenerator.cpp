@@ -1,6 +1,5 @@
 #include "../include/libmodul.h"
 
-#define CAN_INV_DLC                     8
 #define CAN_INV_EFF_FLAG                0x80000000
  
 const uint8_t LOW_MODE = 0x00;                
