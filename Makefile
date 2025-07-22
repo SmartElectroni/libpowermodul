@@ -63,7 +63,7 @@ endif
 
 # Platform-specific flags
 ifeq ($(UNAME_S),Darwin)
-  CXXFLAGS += -arch arm64 -arch x86_64  # Universal binary for macOS
+  CXXFLAGS += -arch arm64 # Universal binary for macOS
 endif
 
 # -------------------------------
@@ -113,3 +113,28 @@ install: $(STATIC_LIB) $(DYNAMIC_LIB)
 # make BUILD_TYPE=Debug
 # make clean          # Clean build artifacts
 # make install        # Install to system (requires sudo)
+
+# Test configuration
+TEST_DIR = tests
+TEST_BUILD_DIR = $(BUILD_DIR)/tests
+TEST_EXEC = $(BUILD_DIR)/$(PROJECT_NAME)_tests
+TEST_SRCS = $(wildcard $(TEST_DIR)/*.cpp)
+TEST_OBJS = $(TEST_SRCS:$(TEST_DIR)/%.cpp=$(TEST_BUILD_DIR)/%.o)
+
+# Google Test paths (update these to match your brew installation)
+GTEST_INC = -I/opt/homebrew/Cellar/googletest/1.17.0/include
+GTEST_LIB = -L/opt/homebrew/Cellar/googletest/1.17.0/lib -lgtest -lgtest_main -lpthread
+
+# Test targets
+.PHONY: test
+
+test: $(TEST_EXEC)
+	@echo "Running tests..."
+	@./$(TEST_EXEC)
+
+$(TEST_EXEC): $(OBJS) $(TEST_OBJS)
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(GTEST_LIB)
+
+$(TEST_BUILD_DIR)/%.o: $(TEST_DIR)/%.cpp
+	@mkdir -p $(TEST_BUILD_DIR)
+	$(CXX) $(CXXFLAGS) $(GTEST_INC) -c $< -o $@
