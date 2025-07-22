@@ -3,8 +3,15 @@
 #include <memory>
 #include <array>
 #include <optional>
+#include <bitset>
 
-#define CAN_INV_DLC     8
+namespace {
+    constexpr uint8_t CAN_INV_DLC = 8;
+    constexpr uint32_t UUGREEN_MASK = 0x2000000;
+    constexpr uint32_t MMEET_MASK = 0xFFFF0000;
+    constexpr uint32_t MMEET_ID = 0x060F0000;
+}
+
 
 #pragma pack(push, 1)
 /**
@@ -482,11 +489,15 @@ struct ParsedData {
     int16_t temperature = 0;
     uint32_t status = 0;
     float current_capability = 0.0f;
-    explicit operator bool() const {
-        return address != 0;
-    }
+
+    enum Field { ADDR, VOLTAGE, CURRENT, TEMP, STATUS, CAPABILITY, COUNT };
+    std::bitset<COUNT> fields;
+    
+    explicit operator bool() const { return fields.any(); }
 };
 #pragma pack(pop)
+
+enum class ParseResult { OK, UNKNOWN_CMD, INVALID_FRAME };
 
 class CanParser {
 public:
@@ -494,46 +505,43 @@ public:
      * @brief Parsing CAN frame
      * @param frame CAN frame for parsing
      * @param protocol Type protocol for interpretation
-     * @return ParsedData data or std::nullopt for error
+     * @return  std::pair<std::optional<ParsedData>, ParseResult> data
      */
-    std::optional<ParsedData> parse(can_frame frame, ProtocolType protocol) {
-        switch(protocol) {
-            case ProtocolType::UUgreen: return parseUUgreen(frame);  
-            case ProtocolType::MMeet:   return parseMMeet(frame);
-            // Add other protocols...
-
-            default: return std::nullopt;
-        }
-    }
+    std::pair<std::optional<ParsedData>, ParseResult> parse(can_frame frame, ProtocolType protocol);
+    
 
 private:
-    /**
-     * @brief Get 32-bit data for protocol UUgreen
-     * @param frame Link to CAN-frame
-     * @return uint32_t Got value 
-     */
-    uint32_t get_dataUUgreen(const struct can_frame& frame);
 
     /**
-     * @brief Get 32-bit data for protocol MMeet
+     * @brief Get 32-bit data for choose protocol
      * @param frame Link to CAN-frame
+     * @param start_byte start position
      * @return uint32_t Got value 
      */
-    uint32_t get_dataMMeet(const struct can_frame& frame);
+    uint32_t extractData(const can_frame& frame, uint8_t start_byte = 4) const;
+
+    /**
+     * @brief Check valid frame for choose protocol
+     * @param frame Link to CAN-frame
+     * @param mask mask for choose protocol
+     * @param expected expected for choose protocol
+     * @return bool isValid 
+     */
+    bool validateFrame(const can_frame& frame, uint32_t mask, uint32_t expected) const;
     
      /**
      * @brief Parsing frame for protocol UUgreen
      * @param frame CAN-frame (send to link)
-     * @return std::optional<ParsedData> Parsed data or std::nullopt for error
+     * @return std::pair<std::optional<ParsedData>, ParseResult> Parsed data or std::nullopt for error
      */
-    std::optional<ParsedData> parseUUgreen(can_frame& frame);
+    std::pair<std::optional<ParsedData>, ParseResult> parseUUgreen(can_frame frame);
 
     /**
      * @brief Parsing frame for protocol MMeet
      * @param frame CAN-frame (send to link)
-     * @return std::optional<ParsedData> Parsed data or std::nullopt for error
+     * @return std::pair<std::optional<ParsedData>, ParseResult> Parsed data or std::nullopt for error
      */
-    std::optional<ParsedData> parseMMeet(const can_frame& frame); 
+    std::pair<std::optional<ParsedData>, ParseResult> parseMMeet(can_frame frame);
 
     // Add other protocol ...
 };

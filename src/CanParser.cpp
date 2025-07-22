@@ -1,73 +1,101 @@
 #include "../include/libmodul.h"
 
-uint32_t CanParser::get_dataUUgreen(const struct can_frame& frame){
-    return (uint32_t)((frame.data[4] << 24) | (frame.data[5] << 16) | (frame.data[6] << 8) | (frame.data[7]));    
+uint32_t CanParser::extractData(const can_frame& frame, uint8_t start_byte) const {
+    return (frame.can_dlc >= start_byte + 4)
+        ? (frame.data[start_byte] << 24) | (frame.data[start_byte+1] << 16) 
+          | (frame.data[start_byte+2] << 8) | frame.data[start_byte+3]
+        : 0;
 }
-std::optional<ParsedData> CanParser::parseUUgreen(can_frame& frame) {
+
+bool CanParser::validateFrame(const can_frame& frame, uint32_t mask, uint32_t expected) const {
+    return (frame.can_id & mask) == expected && frame.can_dlc == CAN_INV_DLC;
+}
+
+std::pair<std::optional<ParsedData>, ParseResult> CanParser::parseUUgreen(can_frame frame) {
+    if (!validateFrame(frame, UUGREEN_MASK, UUGREEN_MASK)) 
+        return {std::nullopt, ParseResult::INVALID_FRAME};
+
     ParsedData result;
-    if (((frame.can_id & 0x2000000) == 0x2000000) && (frame.can_dlc == CAN_INV_DLC))
-    {
-        frame.data[2] = 0;
-        frame.data[3] = 0;
 
-        result.address = (frame.can_id & 0x1FC000) >> 14; 
+    frame.data[2] = 0;
+    frame.data[3] = 0;
 
-        switch(frame.data[1]) 
-        {
-        case 0x00: case 0x62:
-            result.voltage = (float)(get_dataUUgreen(frame) / 1000.0f);
+    result.address = (frame.can_id & 0x1FC000) >> 14;
+    result.fields.set(ParsedData::ADDR);
+
+    const uint32_t data = extractData(frame);
+
+    switch(frame.data[1]) {
+        case 0x00: case 0x62: 
+            result.voltage = data * 0.001f;
+            result.fields.set(ParsedData::VOLTAGE);
             break;
         case 0x01: case 0x30:
-            result.current = (float)(get_dataUUgreen(frame) / 1000.0f);
+            result.current = data * 0.001f;
+            result.fields.set(ParsedData::CURRENT);
             break;
         case 0x08:
-            result.status = get_dataUUgreen(frame);
+            result.status = data;
+            result.fields.set(ParsedData::STATUS);
             break;
         case 0x1E:
-            result.temperature = (int16_t)( ( (int32_t)get_dataUUgreen(frame) )/1000);
+            result.temperature = static_cast<int16_t>(data / 1000);
+            result.fields.set(ParsedData::TEMP);
             break;
         case 0x68:
-            result.current_capability = (float)(get_dataUUgreen(frame) / 1000.0f);
+            result.current_capability = data * 0.001f;
+            result.fields.set(ParsedData::CAPABILITY);
             break;
         default:
-            break;
-        }
-        return result;
+            return {std::nullopt, ParseResult::UNKNOWN_CMD};
     }
-    return std::nullopt;
+    return {result, ParseResult::OK};
 }
 
-uint32_t CanParser::get_dataMMeet(const struct can_frame& frame){
-    return (uint32_t)((frame.data[4] << 24) | (frame.data[5] << 16) | (frame.data[6] << 8) | (frame.data[7]));    
-}
 
-std::optional<ParsedData> CanParser::parseMMeet(const can_frame& frame) {
+std::pair<std::optional<ParsedData>, ParseResult> CanParser::parseMMeet(can_frame frame){
+    if (!validateFrame(frame, MMEET_MASK, MMEET_ID)) 
+        return {std::nullopt, ParseResult::INVALID_FRAME};
+    
     ParsedData result;
-    if (((frame.can_id & 0xFFFF0000) == 0x060F0000) && (frame.can_dlc == CAN_INV_DLC))
-    {
-        result.address = (frame.can_id & 0x7F8) >> 3;
+    result.address = (frame.can_id & 0x7F8) >> 3;
+    result.fields.set(ParsedData::ADDR);
 
-        switch((uint16_t)((frame.data[2] << 8) | (frame.data[3])))
-        {
+    const uint32_t data = extractData(frame);
+    const uint16_t command = (frame.data[2] << 8) | frame.data[3];
+
+    switch(command) {
         case 0x0231:
-            result.voltage = (float)(get_dataMMeet(frame) / 1000.0f);
+            result.voltage = data * 0.001f;
+            result.fields.set(ParsedData::VOLTAGE);
             break;
         case 0x0232:
-            result.current = (float)(get_dataMMeet(frame) / 1000.0f);
+            result.current = data * 0.001f;
+            result.fields.set(ParsedData::CURRENT);
             break;
         case 0x0218:
-            result.status = get_dataMMeet(frame);
+            result.status = data;
+            result.fields.set(ParsedData::STATUS);
             break;
         case 0x020B:
-            result.temperature = (int16_t)(((int32_t)get_dataMMeet(frame)) / 10);
+            result.temperature = static_cast<int16_t>(data / 10);
+            result.fields.set(ParsedData::TEMP);
             break;
         case 0x0235:
-            result.current_capability = (uint16_t)(get_dataMMeet(frame));
+            result.current_capability = static_cast<float>(data);
+            result.fields.set(ParsedData::CAPABILITY);
             break;
         default:
-            break;
-        }
-        return result;
+            return {std::nullopt, ParseResult::UNKNOWN_CMD};
     }
-    return std::nullopt;
+    return {result, ParseResult::OK};
+}
+
+std::pair<std::optional<ParsedData>, ParseResult> CanParser::parse(can_frame frame, ProtocolType protocol) {
+    switch(protocol) {
+        case ProtocolType::UUgreen: return parseUUgreen(std::move(frame));
+        case ProtocolType::MMeet: return parseMMeet(std::move(frame));
+        // Add other protocols...
+        default: return {std::nullopt, ParseResult::INVALID_FRAME};
+    }
 }
