@@ -37,7 +37,7 @@ protected:
     }
 };
 
-// Тесты для протокола UUgreen
+// Tests for protocol UUgreen
 TEST_F(CanParserTest, UUgreen_ValidVoltage) {
     uint32_t address = 0x12;
     uint32_t voltage = 123456; // 123.456V
@@ -134,7 +134,7 @@ TEST_F(CanParserTest, UUgreen_InvalidFrame) {
     ASSERT_FALSE(data);
 }
 
-// Тесты для протокола MMeet
+// Tests for protocol MMeet
 TEST_F(CanParserTest, MMeet_ValidVoltage) {
     uint32_t address = 0x12;
     uint32_t voltage = 54321; // 54.321V
@@ -231,7 +231,7 @@ TEST_F(CanParserTest, MMeet_InvalidFrame) {
     ASSERT_FALSE(data);
 }
 
-// Тест на обработку неизвестного протокола
+//  Test on parser unknow protocol
 TEST_F(CanParserTest, UnknownProtocol) {
     can_frame frame;
     frame.can_id = 0x123;

@@ -111,9 +111,9 @@ std::optional<can_frame> MMeetFrameGenerator::generateAutoModeSet(uint8_t module
     return frame;
 }
    
-can_frame MMeetFrameGenerator::generateVoltageSet(uint8_t module_address, uint16_t voltage)
+can_frame MMeetFrameGenerator::generateVoltageSet(uint8_t module_address, float voltage)
 {
-    uint32_t math_voltage = voltage*100;
+    uint32_t math_voltage = static_cast<uint32_t>(voltage*1000);
     can_frame frame{};
     frame.can_id = (init_frame(module_address)).can_id;
 
@@ -127,9 +127,9 @@ can_frame MMeetFrameGenerator::generateVoltageSet(uint8_t module_address, uint16
     return frame;
 }
 
-can_frame MMeetFrameGenerator::generateCurrentSet(uint8_t module_address, uint16_t current)
+can_frame MMeetFrameGenerator::generateCurrentSet(uint8_t module_address, float current)
 {
-    uint32_t math_current = current*100;
+    uint32_t math_current = static_cast<uint32_t>(current*1000);
     can_frame frame{};
     frame.can_id = (init_frame(module_address)).can_id;
 

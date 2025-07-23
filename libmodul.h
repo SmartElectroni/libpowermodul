@@ -99,18 +99,18 @@ public:
     /**
      * @brief Generate CAN frame for voltage setting
      * @param module_address Device address
-     * @param voltage Voltage value (in 0.1V units)
+     * @param voltage Voltage value (in V units)
      * @return Generated CAN frame
      */
-    virtual can_frame generateVoltageSet(uint8_t module_address, uint16_t voltage) = 0;
+    virtual can_frame generateVoltageSet(uint8_t module_address, float voltage) = 0;
     
     /**
      * @brief Generate CAN frame for current setting
      * @param module_address Device address
-     * @param current Current value (in 0.1A units)
+     * @param current Current value (in A units)
      * @return Generated CAN frame
      */
-    virtual can_frame generateCurrentSet(uint8_t module_address, uint16_t current) = 0;
+    virtual can_frame generateCurrentSet(uint8_t module_address, float current) = 0;
 
     /**
      * @brief Generate CAN frame for power ON
@@ -126,6 +126,8 @@ public:
      */
     virtual can_frame generateDisable(uint8_t module_address) = 0;
 };
+
+
 
 /**
  * @brief CAN Frame Generator for UUgreen protocol
@@ -192,18 +194,18 @@ public:
     /**
      * @brief Generate CAN frame for voltage setting
      * @param module_address Device address
-     * @param voltage Voltage value (in 0.1V units)
+     * @param voltage Voltage value (in V units)
      * @return Generated CAN frame
      */
-    can_frame generateVoltageSet(uint8_t module_address, uint16_t voltage) override;
+    can_frame generateVoltageSet(uint8_t module_address, float voltage) override;
     
     /**
      * @brief Generate CAN frame for current setting
      * @param module_address Device address
-     * @param current Current value (in 0.1A units)
+     * @param current Current value (in A units)
      * @return Generated CAN frame
      */
-    can_frame generateCurrentSet(uint8_t module_address, uint16_t current) override;
+    can_frame generateCurrentSet(uint8_t module_address, float current) override;
 
     /**
      * @brief Generate CAN frame for power ON
@@ -219,13 +221,17 @@ public:
      */
     can_frame generateDisable(uint8_t module_address) override;
 
-protected:
+private:
     /**
      * @brief Init CAN frame for create request
      * @param module_address Device address
      * @return Generated CAN frame
      */
-    can_frame init_frame (uint8_t module_address);    
+    can_frame init_frame (uint8_t module_address); 
+    
+    can_frame create_command_frame(uint8_t module_address, uint8_t prefix, uint8_t command);
+    can_frame create_control_frame(uint8_t module_address, uint8_t command, uint8_t value = 0);
+    void pack_uint32(uint8_t* dest, uint32_t value);
     
 };
 
@@ -294,18 +300,18 @@ public:
     /**
      * @brief Generate CAN frame for voltage setting
      * @param module_address Device address
-     * @param voltage Voltage value (in 0.1V units)
+     * @param voltage Voltage value (in V units)
      * @return Generated CAN frame
      */
-    can_frame generateVoltageSet(uint8_t module_address, uint16_t voltage) override;
+    can_frame generateVoltageSet(uint8_t module_address, float voltage) override;
     
     /**
      * @brief Generate CAN frame for current setting
      * @param module_address Device address
-     * @param current Current value (in 0.1A units)
+     * @param current Current value (in A units)
      * @return Generated CAN frame
      */
-    can_frame generateCurrentSet(uint8_t module_address, uint16_t current) override;
+    can_frame generateCurrentSet(uint8_t module_address, float current) override;
 
     /**
      * @brief Generate CAN frame for power ON
@@ -442,20 +448,20 @@ public:
     /**
      * @brief Generate CAN frame for voltage setting
      * @param module_address Device address
-     * @param voltage Voltage value (in 0.1V units)
+     * @param voltage Voltage value (in V units)
      * @return Generated CAN frame
      */
-    can_frame generateVoltageSet(uint8_t module_address, uint16_t voltage) {
+    can_frame generateVoltageSet(uint8_t module_address, float voltage) {
         return _generator->generateVoltageSet(module_address , voltage);
     }
     
     /**
      * @brief Generate CAN frame for current setting
      * @param module_address Device address
-     * @param current Current value (in 0.1A units)
+     * @param current Current value (in A units)
      * @return Generated CAN frame
      */
-    can_frame generateCurrentSet(uint8_t module_address, uint16_t current) {
+    can_frame generateCurrentSet(uint8_t module_address, float current) {
         return _generator->generateCurrentSet(module_address , current);
     }
 
