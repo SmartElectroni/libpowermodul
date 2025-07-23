@@ -1,2 +1,2 @@
-#include "../include/libmodul.h"
+#include "../libmodul.h"
 

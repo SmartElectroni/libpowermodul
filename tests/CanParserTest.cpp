@@ -1,6 +1,6 @@
 
 #include <gtest/gtest.h>
-#include "../include/libmodul.h"
+#include "../libmodul.h"
 
 class CanParserTest : public ::testing::Test {
 protected:
