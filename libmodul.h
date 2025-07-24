@@ -229,8 +229,30 @@ private:
      */
     can_frame init_frame (uint8_t module_address); 
     
+
+    /**
+     * @brief Creates command frame for standard requests
+     * @param module_address Device address (0-127) 
+     * @param prefix Frame prefix byte (typically protocol-specific)
+     * @param command Command code to execute
+     * @return Configured CAN frame ready for transmission
+     */
     can_frame create_command_frame(uint8_t module_address, uint8_t prefix, uint8_t command);
+
+    /**
+     * @brief Creates control frame for device configuration
+     * @param module_address Device address (0-127)
+     * @param command Control command code
+     * @param value Parameter value for the command (default = 0)
+     * @return Configured control CAN frame
+     */
     can_frame create_control_frame(uint8_t module_address, uint8_t command, uint8_t value = 0);
+
+    /**
+     * @brief Packs 32-bit value into 4-byte array (big-endian)
+     * @param dest Pointer to destination buffer (must have 4+ bytes available)
+     * @param value 32-bit value to pack
+     */
     void pack_uint32(uint8_t* dest, uint32_t value);
     
 };
@@ -327,13 +349,47 @@ public:
      */
     can_frame generateDisable(uint8_t module_address) override;
 
-protected:
+private:
     /**
      * @brief Init CAN frame for create request
      * @param module_address Device address
      * @return Generated CAN frame
      */
-    can_frame init_frame (uint8_t module_address);    
+    can_frame init_frame (uint8_t module_address); 
+    
+    /**
+     * @brief Creates a standard MMeet protocol command frame
+     * @param module_address Device address (0x00-0x7F)
+     * @param command 16-bit MMeet command code (e.g. 0x020B for temperature)
+     * @return Configured CAN frame with:
+     *         - CAN ID containing module address
+     *         - First 4 data bytes set to [0x01, 0xF0, command_high, command_low]
+     */
+    can_frame create_command_frame(uint8_t module_address, uint16_t command);
+
+    /**
+     * @brief Creates a control frame for device configuration
+     * @param module_address Device address (0x00-0x7F)
+     * @param command 16-bit control command code (e.g. 0x025D for mode set)
+     * @param value 16-bit parameter value (default = 0x0000)
+     * @return Configured CAN frame with:
+     *         - Standard MMeet header
+     *         - Command bytes in data[2-3]
+     *         - Value packed in data[6-7] (little-endian)
+     */
+    can_frame create_control_frame(uint8_t module_address, uint16_t command, uint16_t value = 0);
+
+    /**
+     * @brief Packs a 32-bit value into 4-byte array (big-endian format)
+     * @param dest Pointer to destination buffer (must have at least 4 bytes capacity)
+     * @param value 32-bit value to pack
+     * @note Resulting byte order:
+     *       dest[0] = (value >> 24) & 0xFF
+     *       dest[1] = (value >> 16) & 0xFF
+     *       dest[2] = (value >> 8) & 0xFF
+     *       dest[3] = value & 0xFF
+     */
+    void pack_uint32(uint8_t* dest, uint32_t value);
 };
 
 /**
