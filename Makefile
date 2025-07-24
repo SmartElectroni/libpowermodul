@@ -21,6 +21,14 @@ endif
 # Default build type (override with: make BUILD_TYPE=Debug)
 BUILD_TYPE ?= Release
 
+# Library version information
+LIB_MAJOR_VERSION = 1
+LIB_MINOR_VERSION = 0
+LIB_PATCH_VERSION = 0
+
+# Full version string
+LIB_VERSION = $(LIB_MAJOR_VERSION).$(LIB_MINOR_VERSION).$(LIB_PATCH_VERSION)
+
 # Validate build type
 SUPPORTED_BUILD_TYPES = Release Debug RelWithDebInfo MinSizeRel
 ifneq ($(filter $(BUILD_TYPE),$(SUPPORTED_BUILD_TYPES)),)
@@ -70,22 +78,32 @@ endif
 # 5. Target Definitions
 # -------------------------------
 STATIC_LIB = $(LIB_DIR)/lib$(PROJECT_NAME).a
-DYNAMIC_LIB = $(LIB_DIR)/lib$(PROJECT_NAME)$(LIB_EXT)
+DYNAMIC_LIB = $(LIB_DIR)/lib$(PROJECT_NAME).$(LIB_VERSION)$(LIB_EXT)
+DYNAMIC_LIB_MAJOR = $(LIB_DIR)/lib$(PROJECT_NAME).$(LIB_MAJOR_VERSION)$(LIB_EXT)
+DYNAMIC_LIB_SYMLINK = $(LIB_DIR)/lib$(PROJECT_NAME)$(LIB_EXT)
 
 # -------------------------------
 # 6. Build Rules
 # -------------------------------
-all: $(STATIC_LIB) $(DYNAMIC_LIB)
+all: $(STATIC_LIB) $(DYNAMIC_LIB) $(DYNAMIC_LIB_MAJOR) $(DYNAMIC_LIB_SYMLINK)
 
 # Static library
 $(STATIC_LIB): $(OBJS)
 	@mkdir -p $(LIB_DIR)
 	ar rcs $@ $(OBJS)
 
-# Dynamic library
+# Dynamic library with full version
 $(DYNAMIC_LIB): $(OBJS)
 	@mkdir -p $(LIB_DIR)
-	$(CXX) $(LDFLAGS) $(LDFLAGS_SHARED)$(notdir $(DYNAMIC_LIB)) $(OBJS) -o $@
+	$(CXX) $(LDFLAGS) $(LDFLAGS_SHARED)$(notdir $(DYNAMIC_LIB_MAJOR)) $(OBJS) -o $@
+
+# Major version symlink
+$(DYNAMIC_LIB_MAJOR): $(DYNAMIC_LIB)
+	@ln -sf $(notdir $(DYNAMIC_LIB)) $@
+
+# Base symlink
+$(DYNAMIC_LIB_SYMLINK): $(DYNAMIC_LIB_MAJOR)
+	@ln -sf $(notdir $(DYNAMIC_LIB_MAJOR)) $@
 
 # Object files
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
@@ -101,7 +119,8 @@ clean:
 install: $(STATIC_LIB) $(DYNAMIC_LIB)
 	@mkdir -p /usr/local/lib
 	@mkdir -p /usr/local/include
-	cp $(STATIC_LIB) $(DYNAMIC_LIB) /usr/local/lib
+	cp $(STATIC_LIB) $(DYNAMIC_LIB) $(DYNAMIC_LIB_MAJOR) /usr/local/lib
+	ln -sf lib$(PROJECT_NAME).$(LIB_MAJOR_VERSION)$(LIB_EXT) /usr/local/lib/lib$(PROJECT_NAME)$(LIB_EXT)
 	cp -r $(INC_DIR)/* /usr/local/include
 
 .PHONY: all clean install
