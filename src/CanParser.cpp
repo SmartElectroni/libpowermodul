@@ -39,7 +39,7 @@ std::pair<std::optional<ParsedData>, ParseResult> CanParser::parseUUgreen(can_fr
             result.fields.set(ParsedData::STATUS);
             break;
         case 0x1E:
-            result.temperature = static_cast<int16_t>(data / 1000);
+            result.temperature = static_cast<int16_t>(data * 0.001f);
             result.fields.set(ParsedData::TEMP);
             break;
         case 0x68:
@@ -78,11 +78,11 @@ std::pair<std::optional<ParsedData>, ParseResult> CanParser::parseMMeet(can_fram
             result.fields.set(ParsedData::STATUS);
             break;
         case 0x020B:
-            result.temperature = static_cast<int16_t>(data / 10);
+            result.temperature = static_cast<int16_t>(data * 0.1f);
             result.fields.set(ParsedData::TEMP);
             break;
         case 0x0235:
-            result.current_capability = static_cast<float>(data);
+            result.current_capability = static_cast<float>(data * 0.1f);
             result.fields.set(ParsedData::CAPABILITY);
             break;
         default:
