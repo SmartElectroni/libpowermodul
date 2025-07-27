@@ -197,7 +197,7 @@ TEST_F(CanParserTest, MMeet_ValidStatus) {
 
 TEST_F(CanParserTest, MMeet_ValidCurrentCapability) {
     uint32_t address = 0x9A;
-    uint32_t capability = 150; // 150A
+    uint32_t capability = 1100; // 110A
     auto frame = createMMeetFrame(address, 0x0235, capability);
     
     auto [data, result] = parser.parse(frame, ProtocolType::MMeet);
@@ -207,7 +207,7 @@ TEST_F(CanParserTest, MMeet_ValidCurrentCapability) {
     ASSERT_TRUE(data->fields.test(ParsedData::ADDR));
     ASSERT_TRUE(data->fields.test(ParsedData::CAPABILITY));
     EXPECT_EQ(data->address, address);
-    EXPECT_FLOAT_EQ(data->current_capability, 150.0f);
+    EXPECT_FLOAT_EQ(data->current_capability, 110.0f);
 }
 
 TEST_F(CanParserTest, MMeet_UnknownCommand) {
