@@ -1,5 +1,7 @@
 # libmodul
 
+Copyright (c) 2025 SmartElectroni
+
 ### English
 
 #### Overview
