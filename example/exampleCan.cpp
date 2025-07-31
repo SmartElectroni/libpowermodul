@@ -8,16 +8,16 @@
 #include <net/if.h>
 #include <linux/can.h>
 #include <linux/can/raw.h>
-#include "../libmodul.h"  // Заголовочный файл вашей библиотеки
+#include "../libmodul.h" 
 
 using namespace std;
 
-// ========== КОНФИГУРАЦИЯ ТЕСТА ==========
+// ========== Configuration test ==========
 const ProtocolType CURRENT_PROTOCOL = ProtocolType::UUgreen;
 const uint8_t DEVICE_ADDRESS = 1;
 const string CAN_INTERFACE = "can0";
-const float TEST_VOLTAGE = 12.5f;
-const float TEST_CURRENT = 2.5f;
+const float TEST_VOLTAGE = 350.0f;
+const float TEST_CURRENT = 10.5f;
 const int RESPONSE_TIMEOUT_MS = 1000;
 // ========================================
 
@@ -111,7 +111,7 @@ void test_protocol(int can_socket) {
          << (CURRENT_PROTOCOL == ProtocolType::UUgreen ? "UUgreen" : "MMeet") 
          << " ===\n";
 
-    // 1. Запрос и чтение напряжения
+    // 1. Request and read voltage
     cout << "\n[1] Testing voltage request..." << endl;
     can_frame voltage_req = manager.generateVoltageRequest(DEVICE_ADDRESS);
     printCanFrame(voltage_req);
@@ -126,7 +126,7 @@ void test_protocol(int can_socket) {
         }
     }
 
-    // 2. Запрос и чтение тока
+    // 2. Request and read current
     cout << "\n[2] Testing current request..." << endl;
     can_frame current_req = manager.generateCurrentRequest(DEVICE_ADDRESS);
     printCanFrame(current_req);
@@ -141,7 +141,7 @@ void test_protocol(int can_socket) {
         }
     }
 
-    // 3. Запрос и чтение температуры
+    // 3. Request and read temperature
     cout << "\n[3] Testing temperature request..." << endl;
     can_frame temp_req = manager.generateTempRequest(DEVICE_ADDRESS);
     printCanFrame(temp_req);
@@ -156,7 +156,7 @@ void test_protocol(int can_socket) {
         }
     }
 
-    // 4. Запрос и чтение флагов состояния
+    // 4. Request and read flags state
     cout << "\n[4] Testing flags request..." << endl;
     can_frame flags_req = manager.generateFlagsRequest(DEVICE_ADDRESS);
     printCanFrame(flags_req);
@@ -171,7 +171,7 @@ void test_protocol(int can_socket) {
         }
     }
 
-    // 5. Запрос и чтение максимального тока
+    // 5. Request and read maximal capability current
     cout << "\n[5] Testing current capability request..." << endl;
     can_frame cap_req = manager.generateCurrentCapabilityRequest(DEVICE_ADDRESS);
     printCanFrame(cap_req);
@@ -186,7 +186,7 @@ void test_protocol(int can_socket) {
         }
     }
 
-    // 6. Установка напряжения
+    // 6. Set voltage
     cout << "\n[6] Testing voltage set to " << TEST_VOLTAGE << "V..." << endl;
     can_frame set_voltage = manager.generateVoltageSet(DEVICE_ADDRESS, TEST_VOLTAGE);
     printCanFrame(set_voltage);
@@ -201,7 +201,7 @@ void test_protocol(int can_socket) {
         }
     }
 
-    // 7. Установка тока
+    // 7. Set current
     cout << "\n[7] Testing current set to " << TEST_CURRENT << "A..." << endl;
     can_frame set_current = manager.generateCurrentSet(DEVICE_ADDRESS, TEST_CURRENT);
     printCanFrame(set_current);
@@ -216,24 +216,24 @@ void test_protocol(int can_socket) {
         }
     }
 
-    // 8. Тестирование режимов
+    // 8. Testing modes
     cout << "\n[8] Testing modes..." << endl;
     
-    // Установка низкого режима
+    // Set low mode
     cout << "Setting low mode..." << endl;
     can_frame low_mode = manager.generateLowModeSet(DEVICE_ADDRESS);
     printCanFrame(low_mode);
     sendCanFrame(can_socket, low_mode);
     sleep(1);
     
-    // Установка высокого режима
+    // УSet high mode
     cout << "Setting high mode..." << endl;
     can_frame high_mode = manager.generateHighModeSet(DEVICE_ADDRESS);
     printCanFrame(high_mode);
     sendCanFrame(can_socket, high_mode);
     sleep(1);
     
-    // Установка авто режима (если поддерживается)
+    // Set auto mode(if support)
     cout << "Setting auto mode..." << endl;
     if (auto auto_mode = manager.generateAutoModeSet(DEVICE_ADDRESS)) {
         printCanFrame(*auto_mode);
@@ -243,17 +243,17 @@ void test_protocol(int can_socket) {
     }
     sleep(1);
 
-    // 9. Тестирование включения/выключения
+    // 9. Testing enable/disable
     cout << "\n[9] Testing enable/disable..." << endl;
     
-    // Включение устройства
+    // Enabling device
     cout << "Enabling device..." << endl;
     can_frame enable = manager.generateEnable(DEVICE_ADDRESS);
     printCanFrame(enable);
     sendCanFrame(can_socket, enable);
     sleep(1);
     
-    // Выключение устройства
+    // Disabling device
     cout << "Disabling device..." << endl;
     can_frame disable = manager.generateDisable(DEVICE_ADDRESS);
     printCanFrame(disable);
