@@ -8,7 +8,7 @@
 #include <net/if.h>
 #include <linux/can.h>
 #include <linux/can/raw.h>
-#include "../libmodul.h" 
+#include "../../libmodul.h" 
 
 using namespace std;
 

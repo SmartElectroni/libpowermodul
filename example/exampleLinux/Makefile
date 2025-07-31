@@ -8,7 +8,7 @@ OBJ := $(SRC:.cpp=.o)
 
 TARGET := exampleCan
 
-LIB_PATH := ../lib  
+LIB_PATH := ../../lib  
 LIB_NAME := libmodul.1.0.0.so
 FULL_LIB := $(LIB_PATH)/$(LIB_NAME)
 
