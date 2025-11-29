@@ -226,7 +226,7 @@ void test_protocol(int can_socket) {
     sendCanFrame(can_socket, low_mode);
     sleep(1);
     
-    // УSet high mode
+    // Set high mode
     cout << "Setting high mode..." << endl;
     can_frame high_mode = manager.generateHighModeSet(DEVICE_ADDRESS);
     printCanFrame(high_mode);
