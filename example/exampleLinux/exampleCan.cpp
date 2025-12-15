@@ -1,6 +1,7 @@
 
 #include <iostream>
 #include <string>
+#include <cstring>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
