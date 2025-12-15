@@ -124,7 +124,7 @@ TEST_F(CanParserTest, UUgreen_UnknownCommand) {
 }
 
 TEST_F(CanParserTest, UUgreen_InvalidFrame) {
-    can_frame frame;
+    can_frame_lib frame;
     frame.can_id = 0x123; // Invalid ID
     frame.can_dlc = 5;    // Invalid DLC
     
@@ -221,7 +221,7 @@ TEST_F(CanParserTest, MMeet_UnknownCommand) {
 }
 
 TEST_F(CanParserTest, MMeet_InvalidFrame) {
-    can_frame frame;
+    can_frame_lib frame;
     frame.can_id = 0x123; // Invalid ID
     frame.can_dlc = 5;    // Invalid DLC
     
@@ -233,7 +233,7 @@ TEST_F(CanParserTest, MMeet_InvalidFrame) {
 
 //  Test on parser unknow protocol
 TEST_F(CanParserTest, UnknownProtocol) {
-    can_frame frame;
+    can_frame_lib frame;
     frame.can_id = 0x123;
     frame.can_dlc = 8;
     

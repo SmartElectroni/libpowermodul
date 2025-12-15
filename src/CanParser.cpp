@@ -1,17 +1,17 @@
 #include "../libmodul.h"
 
-uint32_t CanParser::extractData(const can_frame& frame, uint8_t start_byte) const {
+uint32_t CanParser::extractData(const can_frame_lib& frame, uint8_t start_byte) const {
     return (frame.can_dlc >= start_byte + 4)
         ? (frame.data[start_byte] << 24) | (frame.data[start_byte+1] << 16) 
           | (frame.data[start_byte+2] << 8) | frame.data[start_byte+3]
         : 0;
 }
 
-bool CanParser::validateFrame(const can_frame& frame, uint32_t mask, uint32_t expected) const {
+bool CanParser::validateFrame(const can_frame_lib& frame, uint32_t mask, uint32_t expected) const {
     return (frame.can_id & mask) == expected && frame.can_dlc == CAN_INV_DLC;
 }
 
-std::pair<std::optional<ParsedData>, ParseResult> CanParser::parseUUgreen(can_frame frame) {
+std::pair<std::optional<ParsedData>, ParseResult> CanParser::parseUUgreen(can_frame_lib frame) {
     if (!validateFrame(frame, UUGREEN_MASK, UUGREEN_MASK)) 
         return {std::nullopt, ParseResult::INVALID_FRAME};
 
@@ -53,7 +53,7 @@ std::pair<std::optional<ParsedData>, ParseResult> CanParser::parseUUgreen(can_fr
 }
 
 
-std::pair<std::optional<ParsedData>, ParseResult> CanParser::parseMMeet(can_frame frame){
+std::pair<std::optional<ParsedData>, ParseResult> CanParser::parseMMeet(can_frame_lib frame){
     if (!validateFrame(frame, MMEET_MASK, MMEET_ID)) 
         return {std::nullopt, ParseResult::INVALID_FRAME};
     
@@ -91,7 +91,7 @@ std::pair<std::optional<ParsedData>, ParseResult> CanParser::parseMMeet(can_fram
     return {result, ParseResult::OK};
 }
 
-std::pair<std::optional<ParsedData>, ParseResult> CanParser::parse(can_frame frame, ProtocolType protocol) {
+std::pair<std::optional<ParsedData>, ParseResult> CanParser::parse(can_frame_lib frame, ProtocolType protocol) {
     switch(protocol) {
         case ProtocolType::UUgreen: return parseUUgreen(std::move(frame));
         case ProtocolType::MMeet: return parseMMeet(std::move(frame));

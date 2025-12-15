@@ -40,7 +40,7 @@ endif
 # -------------------------------
 # 3. Project Settings
 # -------------------------------
-PROJECT_NAME = libmodul
+PROJECT_NAME = powermodul
 SRC_DIR = src
 INC_DIR = include
 BUILD_DIR = build

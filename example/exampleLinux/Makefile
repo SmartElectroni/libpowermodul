@@ -9,10 +9,10 @@ OBJ := $(SRC:.cpp=.o)
 TARGET := exampleCan
 
 LIB_PATH := ../../lib  
-LIB_NAME := libmodul.1.0.0.so
+LIB_NAME := libpowermodul.1.0.0.so
 FULL_LIB := $(LIB_PATH)/$(LIB_NAME)
 
-LDFLAGS := -L$(LIB_PATH) -lmodul -Wl,-rpath=$(LIB_PATH)
+LDFLAGS := -L$(LIB_PATH) -lpowermodul -Wl,-rpath=$(LIB_PATH)
 LDLIBS := -lpthread
 
 .PHONY: all clean run
