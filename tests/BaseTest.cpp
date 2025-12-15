@@ -273,7 +273,7 @@ TEST_F(MMeetFrameGeneratorTest, GenerateDisable) {
 
 // CanParser Tests
 TEST_F(CanParserTest, ParseUUgreenVoltage) {
-    can_frame_lib frame;
+    can_frame frame;
     frame.can_id = 0x02200000 | (0x10 << 14) | 0x80000000;
     frame.can_dlc = CAN_INV_DLC;
     frame.data[0] = 0x12; // PREAMBLE
@@ -291,7 +291,7 @@ TEST_F(CanParserTest, ParseUUgreenVoltage) {
 }
 
 TEST_F(CanParserTest, ParseMMeetCurrent) {
-    can_frame_lib frame;
+    can_frame frame;
     frame.can_id = (0x10 << 3) | MMEET_ID;
     frame.can_dlc = CAN_INV_DLC;
     frame.data[0] = 0x01; // FRAME_PREFIX
@@ -311,7 +311,7 @@ TEST_F(CanParserTest, ParseMMeetCurrent) {
 }
 
 TEST_F(CanParserTest, ParseUnknownProtocol) {
-    can_frame_lib frame;
+    can_frame frame;
     auto result = parser.parse(frame, static_cast<ProtocolType>(99));
     EXPECT_EQ(result.second, ParseResult::INVALID_FRAME);
 }
