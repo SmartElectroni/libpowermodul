@@ -1,5 +1,5 @@
-# libmodul
-
+# libpowermodul
+MIT License 
 Copyright (c) 2025 SmartElectroni
 
 ### English

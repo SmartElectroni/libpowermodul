@@ -1,3 +1,4 @@
+/* MIT License Copyright (c) 2025 SmartElectroni*/
 #pragma once
 #include <cstdint>
 #include <memory>

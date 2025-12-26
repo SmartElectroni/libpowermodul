@@ -1,3 +1,5 @@
+/* MIT License Copyright (c) 2025 SmartElectroni*/
+
 #include "../libmodul.h"
 
 uint32_t CanParser::extractData(const can_frame& frame, uint8_t start_byte) const {

@@ -1,3 +1,47 @@
+/* MIT License Copyright (c) 2025 SmartElectroni*/
+
+/*This code is a demonstration example for testing the functionality of
+ communication with a power converter unit via the CAN bus. It implements 
+ basic procedures for sending commands and receiving responses from the device 
+ using a custom library (libpowermodul).
+
+Key aspects of the code:
+    Purpose: To verify the correct operation of the CanProtocolManager 
+    and CanParser classes from the library. It tests a sequence of operations: 
+    reading parameters (voltage, current, temperature, status, capability), 
+    setting parameters (voltage, current), changing operating modes (low, high, auto),
+    and controlling the device's enable/disable state.
+
+Structure:
+    Opens a raw CAN socket on the specified interface (can0).
+    Creates instances of CanProtocolManager (for generating CAN frames) 
+    and CanParser (for parsing incoming frames).
+    Sequentially executes test scenarios, sending a request, waiting for a response,
+    parsing it, and displaying the results.
+
+Important Note for Real Projects:
+    This code is a simplified example. In a real system, the CAN bus may contain messages 
+    from multiple nodes.
+    Message Filtering: It is crucial to implement CAN ID filtering (e.g., using setsockopt 
+    with CAN_RAW_FILTER) to process only relevant messages for your application. 
+    This example reads all frames on the socket.
+
+    Concurrency & Architecture: 
+        For robust operation, a real application should separate 
+        communication into dedicated threads:
+            Transmit Thread/Queue: 
+            Manages sending messages from the application to the CAN bus,
+            handling priorities and potential bus load.
+            Receive Thread: 
+            Continuously reads all CAN frames, applies filters, and places relevant messages 
+            into a thread-safe queue for processing by the main application logic. 
+            This prevents blocking I/O and ensures no messages are lost.
+    
+    This example serves as a foundation for understanding the library API, 
+    but a production-ready implementation requires the addition of proper filtering, 
+    a multi-threaded architecture, error handling, and potentially a state machine 
+    or managing device communication.
+*/
 
 #include <iostream>
 #include <string>

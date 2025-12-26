@@ -1,4 +1,5 @@
 # =============================================
+# MIT License Copyright (c) 2025 SmartElectroni
 # Universal Makefile for C++ Libraries
 # Supports: Linux (.so) and macOS (.dylib)
 # =============================================
