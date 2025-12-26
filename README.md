@@ -5,7 +5,17 @@ Copyright (c) 2025 SmartElectroni
 ### English
 
 #### Overview
-This C++ library provides functionality for generating and parsing CAN frames for different power supply protocols (UUgreen and MMeet). It implements the Strategy pattern to support multiple protocols with a unified interface.
+This C++ library provides functionality for generating and parsing CAN frames for different power supply protocols (UUGreenPower and Megmeet). It implements the Strategy pattern to support multiple protocols with a unified interface.
+UR100030-SW（EU）(UUGreenPower) high power 30kW charging module is dedicated to application in the fast charging station.
+MIPC1000-100G (Megmeet) Full digital control, super protective measures, special protection for key device pins; built-in bleeder circuit, anti-reverse diode.
+
+This C++ library provides functionality for generating and parsing CAN frames for different power supply protocols (UUGreenPower and Megmeet). It implements the Strategy design pattern to support multiple protocols through a unified interface.
+
+Compatible Devices:
+
+UR100030-SW (EU) (UUGreenPower) – A high-power 30kW charging module.
+MIPC1000-100G (Megmeet) – A high-power 30kW charging module.
+Both modules are designed for fast-charging station applications.
 
 #### Features
 - CAN frame generation for various commands:
