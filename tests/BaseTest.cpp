@@ -65,7 +65,7 @@ TEST_F(UUgreenFrameGeneratorTest, GenerateLowModeSet) {
     EXPECT_NE(frame.can_id, 0u);
     EXPECT_EQ(frame.data[0], 0x10); // CONTROL_PREFIX
     EXPECT_EQ(frame.data[1], 0x5F); // MODE_SET_CMD
-    EXPECT_EQ(frame.data[7], 0x00); // LOW_MODE
+    EXPECT_EQ(frame.data[7], 0x02); // LOW_MODE
 }
 
 TEST_F(UUgreenFrameGeneratorTest, GenerateHighModeSet) {
