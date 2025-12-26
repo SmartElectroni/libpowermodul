@@ -18,7 +18,7 @@ namespace UUgreenConstants {
     constexpr uint8_t POWER_CTRL_CMD = 0x04;
     
     // mode and state
-    constexpr uint8_t LOW_MODE = 0x00;
+    constexpr uint8_t LOW_MODE = 0x02;
     constexpr uint8_t HIGH_MODE = 0x01;
     constexpr uint8_t OFF = 0x01;
     constexpr uint8_t ON = 0x00;

@@ -118,10 +118,9 @@ clean:
 
 install: $(STATIC_LIB) $(DYNAMIC_LIB)
 	@mkdir -p /usr/local/lib
-	@mkdir -p /usr/local/include
 	cp $(STATIC_LIB) $(DYNAMIC_LIB) $(DYNAMIC_LIB_MAJOR) /usr/local/lib
 	ln -sf lib$(PROJECT_NAME).$(LIB_MAJOR_VERSION)$(LIB_EXT) /usr/local/lib/lib$(PROJECT_NAME)$(LIB_EXT)
-	cp -r $(INC_DIR)/* /usr/local/include
+	
 
 .PHONY: all clean install
 

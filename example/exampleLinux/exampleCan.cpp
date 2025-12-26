@@ -18,6 +18,7 @@ const ProtocolType CURRENT_PROTOCOL = ProtocolType::UUgreen;
 const uint8_t DEVICE_ADDRESS = 1;
 const string CAN_INTERFACE = "can0";
 const float TEST_VOLTAGE = 350.0f;
+const float TEST_HIGH_VOLTAGE = 750.0f;
 const float TEST_CURRENT = 10.5f;
 const int RESPONSE_TIMEOUT_MS = 1000;
 // ========================================
@@ -127,6 +128,8 @@ void test_protocol(int can_socket) {
         }
     }
 
+    sleep(1);
+
     // 2. Request and read current
     cout << "\n[2] Testing current request..." << endl;
     can_frame current_req = manager.generateCurrentRequest(DEVICE_ADDRESS);
@@ -141,6 +144,8 @@ void test_protocol(int can_socket) {
             }
         }
     }
+
+    sleep(1);
 
     // 3. Request and read temperature
     cout << "\n[3] Testing temperature request..." << endl;
@@ -157,6 +162,8 @@ void test_protocol(int can_socket) {
         }
     }
 
+    sleep(1);
+
     // 4. Request and read flags state
     cout << "\n[4] Testing flags request..." << endl;
     can_frame flags_req = manager.generateFlagsRequest(DEVICE_ADDRESS);
@@ -171,6 +178,8 @@ void test_protocol(int can_socket) {
             }
         }
     }
+
+    sleep(1);
 
     // 5. Request and read maximal capability current
     cout << "\n[5] Testing current capability request..." << endl;
@@ -187,6 +196,8 @@ void test_protocol(int can_socket) {
         }
     }
 
+    sleep(1);
+
     // 6. Set voltage
     cout << "\n[6] Testing voltage set to " << TEST_VOLTAGE << "V..." << endl;
     can_frame set_voltage = manager.generateVoltageSet(DEVICE_ADDRESS, TEST_VOLTAGE);
@@ -201,6 +212,8 @@ void test_protocol(int can_socket) {
             }
         }
     }
+
+    sleep(1);
 
     // 7. Set current
     cout << "\n[7] Testing current set to " << TEST_CURRENT << "A..." << endl;
@@ -217,46 +230,240 @@ void test_protocol(int can_socket) {
         }
     }
 
+    sleep(1);
+
     // 8. Testing modes
     cout << "\n[8] Testing modes..." << endl;
     
     // Set low mode
     cout << "Setting low mode..." << endl;
     can_frame low_mode = manager.generateLowModeSet(DEVICE_ADDRESS);
-    printCanFrame(low_mode);
-    sendCanFrame(can_socket, low_mode);
-    sleep(1);
+    printCanFrame(low_mode);    
+    if (sendCanFrame(can_socket, low_mode)) {
+        if (auto response = receiveCanFrame(can_socket, RESPONSE_TIMEOUT_MS)) {
+            printCanFrame(*response);
+            auto [parsed_data, parse_result] = parser.parse(*response, CURRENT_PROTOCOL);
+            if (parse_result == ParseResult::OK && parsed_data) {
+                printParsedData(*parsed_data);
+            }
+        }
+    }
+
+    sleep(2);
+
+    //Set voltage 350
+    cout << "\n[8] Testing voltage set to " << TEST_VOLTAGE << "V..." << endl;
+    set_voltage = manager.generateVoltageSet(DEVICE_ADDRESS, TEST_VOLTAGE);
+    printCanFrame(set_voltage);
+    
+    if (sendCanFrame(can_socket, set_voltage)) {
+        if (auto response = receiveCanFrame(can_socket, RESPONSE_TIMEOUT_MS)) {
+            printCanFrame(*response);
+            auto [parsed_data, parse_result] = parser.parse(*response, CURRENT_PROTOCOL);
+            if (parse_result == ParseResult::OK && parsed_data) {
+                printParsedData(*parsed_data);
+            }
+        }
+    }
+    
+    sleep(2);
+
+    // Enabling device
+    cout << "Enabling device..." << endl;
+    can_frame enable = manager.generateEnable(DEVICE_ADDRESS);
+    printCanFrame(enable);
+    sendCanFrame(can_socket, enable);
+    receiveCanFrame(can_socket, RESPONSE_TIMEOUT_MS);
+
+    sleep(5);
+
+    //Set voltage HIGH 750
+    cout << "\n[8] Testing voltage set to " << TEST_HIGH_VOLTAGE << "V..." << endl;
+    set_voltage = manager.generateVoltageSet(DEVICE_ADDRESS, TEST_HIGH_VOLTAGE);
+    printCanFrame(set_voltage);
+    
+    if (sendCanFrame(can_socket, set_voltage)) {
+        if (auto response = receiveCanFrame(can_socket, RESPONSE_TIMEOUT_MS)) {
+            printCanFrame(*response);
+            auto [parsed_data, parse_result] = parser.parse(*response, CURRENT_PROTOCOL);
+            if (parse_result == ParseResult::OK && parsed_data) {
+                printParsedData(*parsed_data);
+            }
+        }
+    }
+
+    sleep(5);    
+
+    // Disabling device
+    cout << "Disabling device..." << endl;
+    can_frame disable = manager.generateDisable(DEVICE_ADDRESS);
+    printCanFrame(disable);
+    sendCanFrame(can_socket, disable);
+    receiveCanFrame(can_socket, RESPONSE_TIMEOUT_MS);
+
+    sleep(2);
     
     // Set high mode
     cout << "Setting high mode..." << endl;
     can_frame high_mode = manager.generateHighModeSet(DEVICE_ADDRESS);
     printCanFrame(high_mode);
-    sendCanFrame(can_socket, high_mode);
-    sleep(1);
+    if (sendCanFrame(can_socket, high_mode)) {
+        if (auto response = receiveCanFrame(can_socket, RESPONSE_TIMEOUT_MS)) {
+            printCanFrame(*response);
+            auto [parsed_data, parse_result] = parser.parse(*response, CURRENT_PROTOCOL);
+            if (parse_result == ParseResult::OK && parsed_data) {
+                printParsedData(*parsed_data);
+            }
+        }
+    }
+    sleep(2);
+
+    //Set voltage HIGH 750
+    cout << "\n[8] Testing voltage set to " << TEST_HIGH_VOLTAGE << "V..." << endl;
+    set_voltage = manager.generateVoltageSet(DEVICE_ADDRESS, TEST_HIGH_VOLTAGE);
+    printCanFrame(set_voltage);
     
+    if (sendCanFrame(can_socket, set_voltage)) {
+        if (auto response = receiveCanFrame(can_socket, RESPONSE_TIMEOUT_MS)) {
+            printCanFrame(*response);
+            auto [parsed_data, parse_result] = parser.parse(*response, CURRENT_PROTOCOL);
+            if (parse_result == ParseResult::OK && parsed_data) {
+                printParsedData(*parsed_data);
+            }
+        }
+    }
+
+    sleep(2);
+
+    // Enabling device
+    cout << "Enabling device..." << endl;
+    enable = manager.generateEnable(DEVICE_ADDRESS);
+    printCanFrame(enable);
+    sendCanFrame(can_socket, enable);
+    receiveCanFrame(can_socket, RESPONSE_TIMEOUT_MS);    
+    
+    sleep(5);
+
+    //Set voltage 350
+    cout << "\n[8] Testing voltage set to " << TEST_VOLTAGE << "V..." << endl;
+    set_voltage = manager.generateVoltageSet(DEVICE_ADDRESS, TEST_VOLTAGE);
+    printCanFrame(set_voltage);
+    
+    if (sendCanFrame(can_socket, set_voltage)) {
+        if (auto response = receiveCanFrame(can_socket, RESPONSE_TIMEOUT_MS)) {
+            printCanFrame(*response);
+            auto [parsed_data, parse_result] = parser.parse(*response, CURRENT_PROTOCOL);
+            if (parse_result == ParseResult::OK && parsed_data) {
+                printParsedData(*parsed_data);
+            }
+        }
+    }
+
+    sleep(5);
+  
+
+    // Disabling device
+    cout << "Disabling device..." << endl;
+    disable = manager.generateDisable(DEVICE_ADDRESS);
+    printCanFrame(disable);
+    sendCanFrame(can_socket, disable);
+    receiveCanFrame(can_socket, RESPONSE_TIMEOUT_MS);
+    sleep(2);
+
+
+    //Set voltage HIGH 750
+    cout << "\n[8] Testing voltage set to " << TEST_HIGH_VOLTAGE << "V..." << endl;
+    set_voltage = manager.generateVoltageSet(DEVICE_ADDRESS, TEST_HIGH_VOLTAGE);
+    printCanFrame(set_voltage);
+    
+    if (sendCanFrame(can_socket, set_voltage)) {
+        if (auto response = receiveCanFrame(can_socket, RESPONSE_TIMEOUT_MS)) {
+            printCanFrame(*response);
+            auto [parsed_data, parse_result] = parser.parse(*response, CURRENT_PROTOCOL);
+            if (parse_result == ParseResult::OK && parsed_data) {
+                printParsedData(*parsed_data);
+            }
+        }
+    }
+
+    sleep(2);
+
+    // Enabling device
+    cout << "Enabling device..." << endl;
+    enable = manager.generateEnable(DEVICE_ADDRESS);
+    printCanFrame(enable);
+    sendCanFrame(can_socket, enable);
+    receiveCanFrame(can_socket, RESPONSE_TIMEOUT_MS);    
+    
+    sleep(5);
+
+    //Set voltage 350
+    cout << "\n[8] Testing voltage set to " << TEST_VOLTAGE << "V..." << endl;
+    set_voltage = manager.generateVoltageSet(DEVICE_ADDRESS, TEST_VOLTAGE);
+    printCanFrame(set_voltage);
+    
+    if (sendCanFrame(can_socket, set_voltage)) {
+        if (auto response = receiveCanFrame(can_socket, RESPONSE_TIMEOUT_MS)) {
+            printCanFrame(*response);
+            auto [parsed_data, parse_result] = parser.parse(*response, CURRENT_PROTOCOL);
+            if (parse_result == ParseResult::OK && parsed_data) {
+                printParsedData(*parsed_data);
+            }
+        }
+    }
+
+    sleep(5);
+  
+
+    // Disabling device
+    cout << "Disabling device..." << endl;
+    disable = manager.generateDisable(DEVICE_ADDRESS);
+    printCanFrame(disable);
+    sendCanFrame(can_socket, disable);
+    receiveCanFrame(can_socket, RESPONSE_TIMEOUT_MS);
+    sleep(2);
+  
     // Set auto mode(if support)
     cout << "Setting auto mode..." << endl;
     if (auto auto_mode = manager.generateAutoModeSet(DEVICE_ADDRESS)) {
         printCanFrame(*auto_mode);
         sendCanFrame(can_socket, *auto_mode);
+        receiveCanFrame(can_socket, RESPONSE_TIMEOUT_MS);
+        
     } else {
         cout << "Auto mode not supported by this protocol" << endl;
     }
-    sleep(1);
+    sleep(2);
 
     // 9. Testing enable/disable
     cout << "\n[9] Testing enable/disable..." << endl;
     
     // Enabling device
     cout << "Enabling device..." << endl;
-    can_frame enable = manager.generateEnable(DEVICE_ADDRESS);
+    enable = manager.generateEnable(DEVICE_ADDRESS);
     printCanFrame(enable);
     sendCanFrame(can_socket, enable);
-    sleep(1);
+
+    //Set voltage 350
+    cout << "\n[6] Testing voltage set to " << TEST_VOLTAGE << "V..." << endl;
+    set_voltage = manager.generateVoltageSet(DEVICE_ADDRESS, TEST_VOLTAGE);
+    printCanFrame(set_voltage);
+    
+    if (sendCanFrame(can_socket, set_voltage)) {
+        if (auto response = receiveCanFrame(can_socket, RESPONSE_TIMEOUT_MS)) {
+            printCanFrame(*response);
+            auto [parsed_data, parse_result] = parser.parse(*response, CURRENT_PROTOCOL);
+            if (parse_result == ParseResult::OK && parsed_data) {
+                printParsedData(*parsed_data);
+            }
+        }
+    }
+
+    sleep(5);
     
     // Disabling device
     cout << "Disabling device..." << endl;
-    can_frame disable = manager.generateDisable(DEVICE_ADDRESS);
+    disable = manager.generateDisable(DEVICE_ADDRESS);
     printCanFrame(disable);
     sendCanFrame(can_socket, disable);
     sleep(1);
@@ -290,6 +497,6 @@ int main() {
     }
     
     if (can_socket >= 0) close(can_socket);
-    cout << "\nTesting completed successfully" << endl;
+    cout << "\nTesting completed" << endl;
     return 0;
 }
