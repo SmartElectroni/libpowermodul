@@ -1,2 +1,4 @@
 libmodul.code-workspace
 build
+.DS_Store
+*.DS_Store
