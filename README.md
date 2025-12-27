@@ -14,7 +14,7 @@ This C++ library provides functionality for generating and parsing CAN frames fo
 Compatible Devices:
 
 UR100030-SW (EU) (UUGreenPower) – A high-power 30kW charging module.
-MIPC1000-100G (Megmeet) – A high-power 30kW charging module.
+MIPC1000-100G or MIPC1000-135G (Megmeet) – A high-power (30 - 40)kW charging module.
 Both modules are designed for fast-charging station applications.
 
 #### Features
