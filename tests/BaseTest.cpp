@@ -188,7 +188,7 @@ TEST_F(MMeetFrameGeneratorTest, GenerateLowModeSet) {
     EXPECT_NE(frame.can_id, 0u);
     EXPECT_EQ(frame.data[0], 0x01); // FRAME_PREFIX
     EXPECT_EQ(frame.data[1], 0xF0); // FRAME_SUFFIX
-    EXPECT_EQ(frame.data[2], 0x02); // MODE_SET_CMD high
+    EXPECT_EQ(frame.data[2], 0x00); // MODE_SET_CMD high
     EXPECT_EQ(frame.data[3], 0x5D); // MODE_SET_CMD low
     EXPECT_EQ(frame.data[6], 0x11); // LOW_MODE high
     EXPECT_EQ(frame.data[7], 0x11); // LOW_MODE low
@@ -200,7 +200,7 @@ TEST_F(MMeetFrameGeneratorTest, GenerateHighModeSet) {
     EXPECT_NE(frame.can_id, 0u);
     EXPECT_EQ(frame.data[0], 0x01); // FRAME_PREFIX
     EXPECT_EQ(frame.data[1], 0xF0); // FRAME_SUFFIX
-    EXPECT_EQ(frame.data[2], 0x02); // MODE_SET_CMD high
+    EXPECT_EQ(frame.data[2], 0x00); // MODE_SET_CMD high
     EXPECT_EQ(frame.data[3], 0x5D); // MODE_SET_CMD low
     EXPECT_EQ(frame.data[6], 0x22); // HIGH_MODE high
     EXPECT_EQ(frame.data[7], 0x22); // HIGH_MODE low
@@ -224,10 +224,10 @@ TEST_F(MMeetFrameGeneratorTest, GenerateVoltageSet) {
     EXPECT_NE(frame.can_id, 0u);
     EXPECT_EQ(frame.data[0], 0x01); // FRAME_PREFIX
     EXPECT_EQ(frame.data[1], 0xF0); // FRAME_SUFFIX
-    EXPECT_EQ(frame.data[2], 0x02); // VOLTAGE_SET_CMD high
+    EXPECT_EQ(frame.data[2], 0x00); // VOLTAGE_SET_CMD high
     EXPECT_EQ(frame.data[3], 0x2C); // VOLTAGE_SET_CMD low
     
-    uint32_t expected = static_cast<uint32_t>(voltage * 100);
+    uint32_t expected = static_cast<uint32_t>(voltage * 1000);
     uint32_t actual = (frame.data[4] << 24) | (frame.data[5] << 16) | 
                      (frame.data[6] << 8) | frame.data[7];
     EXPECT_EQ(actual, expected);
@@ -241,7 +241,7 @@ TEST_F(MMeetFrameGeneratorTest, GenerateCurrentSet) {
     EXPECT_NE(frame.can_id, 0u);
     EXPECT_EQ(frame.data[0], 0x01); // FRAME_PREFIX
     EXPECT_EQ(frame.data[1], 0xF0); // FRAME_SUFFIX
-    EXPECT_EQ(frame.data[2], 0x02); // CURRENT_SET_CMD high
+    EXPECT_EQ(frame.data[2], 0x00); // CURRENT_SET_CMD high
     EXPECT_EQ(frame.data[3], 0x2D); // CURRENT_SET_CMD low
     
     uint32_t expected = static_cast<uint32_t>(current * 1000);
@@ -256,7 +256,7 @@ TEST_F(MMeetFrameGeneratorTest, GenerateEnable) {
     EXPECT_NE(frame.can_id, 0u);
     EXPECT_EQ(frame.data[0], 0x01); // FRAME_PREFIX
     EXPECT_EQ(frame.data[1], 0xF0); // FRAME_SUFFIX
-    EXPECT_EQ(frame.data[2], 0x02); // POWER_CTRL_CMD high
+    EXPECT_EQ(frame.data[2], 0x00); // POWER_CTRL_CMD high
     EXPECT_EQ(frame.data[3], 0x01); // POWER_CTRL_CMD low
     EXPECT_EQ(frame.data[7], 0xAA); // ON
 }
@@ -267,7 +267,7 @@ TEST_F(MMeetFrameGeneratorTest, GenerateDisable) {
     EXPECT_NE(frame.can_id, 0u);
     EXPECT_EQ(frame.data[0], 0x01); // FRAME_PREFIX
     EXPECT_EQ(frame.data[1], 0xF0); // FRAME_SUFFIX
-    EXPECT_EQ(frame.data[2], 0x02); // POWER_CTRL_CMD high
+    EXPECT_EQ(frame.data[2], 0x00); // POWER_CTRL_CMD high
     EXPECT_EQ(frame.data[3], 0x01); // POWER_CTRL_CMD low
     EXPECT_EQ(frame.data[7], 0x55); // OFF
 }

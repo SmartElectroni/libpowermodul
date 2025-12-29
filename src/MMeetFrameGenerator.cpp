@@ -1,4 +1,3 @@
-/* MIT License Copyright (c) 2025 SmartElectroni*/
 #include "../libmodul.h"
 
 namespace MMeetConstants {
@@ -14,10 +13,10 @@ namespace MMeetConstants {
     constexpr uint16_t CURRENT_CMD = 0x0232;
     
     // cmd control
-    constexpr uint16_t MODE_SET_CMD = 0x025D;
-    constexpr uint16_t VOLTAGE_SET_CMD = 0x022C;
-    constexpr uint16_t CURRENT_SET_CMD = 0x022D;
-    constexpr uint16_t POWER_CTRL_CMD = 0x0201;
+    constexpr uint16_t MODE_SET_CMD = 0x005D;
+    constexpr uint16_t VOLTAGE_SET_CMD = 0x002C;
+    constexpr uint16_t CURRENT_SET_CMD = 0x002D;
+    constexpr uint16_t POWER_CTRL_CMD = 0x0001;
     
     // mode and state
     constexpr uint16_t LOW_MODE = 0x1111;
@@ -99,7 +98,7 @@ std::optional<can_frame> MMeetFrameGenerator::generateAutoModeSet(uint8_t module
 }
 
 can_frame MMeetFrameGenerator::generateVoltageSet(uint8_t module_address, float voltage) {
-    uint32_t math_voltage = static_cast<uint32_t>(voltage * 100);
+    uint32_t math_voltage = static_cast<uint32_t>(voltage * 1000);
     can_frame frame = create_command_frame(module_address, MMeetConstants::VOLTAGE_SET_CMD);
     pack_uint32(frame.data + 4, math_voltage);
     return frame;
